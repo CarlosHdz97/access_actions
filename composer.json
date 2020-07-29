@@ -1,0 +1,13 @@
+{
+    "name": "vendor/access_operations",
+    "authors": [
+        {
+            "name": "Carlos Hernández",
+            "email": "CarlosHdz_97@outlook.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpexcel": "^1.8",
+        "phpoffice/phpspreadsheet": "^1.14"
+    }
+}

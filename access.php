@@ -1,6 +1,6 @@
 <?php
 require_once('./vendor/autoload.php');
-define("ACCDB","C:\\Users\\Yusev\\Desktop\\chido\\ACCESS\\SP22020.mdb");
+define("ACCDB","C:\\2020_MOCHILA_RAC\Datos\\RAC2020.mdb");
 class Access{
   public $con = null;
   
@@ -133,5 +133,49 @@ class Access{
   public function free($commit=false){
     if($commit){ $this->con->commit(); echo "cambios aplicados"; }
     $this->con=null;
+  }
+
+  public function ProductWithStockWithMinMax(){
+    
+    $query = "SELECT F_STO.ARTSTO, F_STO.ACTSTO, F_STO.MINSTO, F_STO.MAXSTO, F_STO.DISSTO, F_ART.CCOART, F_ART.DLAART FROM F_STO, F_ART WHERE F_STO.ACTSTO>0 AND F_STO.ALMSTO = 'GEN' AND (F_STO.MINSTO<1 OR F_STO.MAXSTO<1) AND F_ART.CODART = F_STO.ARTSTO";
+    $exec = $this->con->prepare($query);
+    $exec->execute();
+    $rows = $exec->fetchAll(\PDO::FETCH_ASSOC);
+    $timestamp = time();
+      $filename = 'Min_Max_' . $timestamp . '.xls';
+      header("Content-Type: application/vnd.ms-excel");
+      header("Content-Disposition: attachment; filename=\"$filename\"");
+      
+      $isPrintHeader = false;
+      foreach ($rows as $row) {
+        if (! $isPrintHeader) {
+          echo implode("\t", array_keys($row)) . "\n";
+          $isPrintHeader = true;
+        }
+        echo implode("\t", array_values($row)) . "\n";
+      }
+      exit();
+  }
+
+  public function ProductWithMinMax(){
+    
+    $query = "SELECT F_STO.ARTSTO, F_STO.ACTSTO, F_STO.MINSTO, F_STO.MAXSTO, F_STO.DISSTO, F_ART.FAMART, F_ART.DLAART FROM F_STO, F_ART WHERE (F_STO.MINSTO>0 OR F_STO.MAXSTO) AND F_STO.ALMSTO = 'GEN' AND F_ART.CODART = F_STO.ARTSTO";
+    $exec = $this->con->prepare($query);
+    $exec->execute();
+    $rows = $exec->fetchAll(\PDO::FETCH_ASSOC);
+    $timestamp = time();
+      $filename = 'Min_Max_' . $timestamp . '.xls';
+      header("Content-Type: application/vnd.ms-excel");
+      header("Content-Disposition: attachment; filename=\"$filename\"");
+      
+      $isPrintHeader = false;
+      foreach ($rows as $row) {
+        if (! $isPrintHeader) {
+          echo implode("\t", array_keys($row)) . "\n";
+          $isPrintHeader = true;
+        }
+        echo implode("\t", array_values($row)) . "\n";
+      }
+      exit();
   }
 }
